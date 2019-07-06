@@ -24,16 +24,28 @@ function initBoard() {
     updateMan();
 }
 
+//Initializes the hint button
+function initHints() {
+    $("#hintArea").append("<br />");
+    $("#hintArea").append("<button class='hintBtn'>Press For A Hint</button>");
+}
+
+//Changes the hint button to hint text
+function updateHints() {
+    $("#hintArea").empty();
+    $("#hintArea").append("<br />");
+    $("#hintArea").append("<span class='hint'>Hint: " + selectedHint + "</span>");
+}
+
 //Redraws the board to show current guesses
 function updateBoard() {
+    updateMan();
     $("#word").empty();
-    
+
     for (var i = 0; i < board.length; i++) {
         $("#word").append(board[i] + " ");
     }
-
-    $("#word").append("<br />");
-    $("#word").append("<span class='hint'>Hint: " + selectedHint + "</span>");
+    updateMan();
 }
 
 //Creates the letter buttons for user input
@@ -52,12 +64,19 @@ function updateMan() {
 $('.letter').click(function(){
     checkLetter($(this).attr("id"));
     disableButton($(this));
-    console.log($(this).attr("id"));
 })
 
 //Event handler for the replay buttons
 $(".replayBtn").on("click", function() {
     location.reload();
+})
+
+//Displays a hint at the cost of one guess
+$(".hintBtn").on("click", function() {
+    remainingGuesses -= 1;
+    updateHints();
+    updateMan();
+    updateBoard();
 })
 
 //Changes the board to reflect the end of the game
@@ -117,7 +136,6 @@ function updateWord(positions, letter) {
     for (var pos of positions) {
         board[pos] = letter;
     }
-
     updateBoard();
 }
 
@@ -125,6 +143,7 @@ function updateWord(positions, letter) {
 function startGame() {
     pickWord();
     initBoard();
+    initHints();
     createLetters();
     console.log(selectedWord);
     updateBoard();
